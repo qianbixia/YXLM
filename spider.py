@@ -62,7 +62,7 @@ def run(url):
         for pf in get_one_hero(id):
             # print(pf)
             pf_full_name = path + '\\' + pf['heroName'] + pf['skinId'] +'.jpg'
-            pf_url = pf['mainImg']
+            pf_url = pf['sourceImg']
             # print("皮肤的name： " + pf_full_name)
             # print("皮肤的下载url： "+ pf_url)
             if pf_url :

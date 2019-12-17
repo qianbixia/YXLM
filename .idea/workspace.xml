@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="de38913b-4db7-4f54-a962-2cc6cf1f579a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/spider.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,7 +43,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.spider">
     <configuration name="spider" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="YXLM" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -110,9 +110,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.spider" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.test0000" />
-        <item itemvalue="Python.spider" />
       </list>
     </recent_temporary>
   </component>
