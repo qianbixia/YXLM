@@ -1,41 +1,79 @@
-from filecmp import cmp
-
 import requests
-#
-# name = 'fff-K/DA /\?*:"<>|伊芙琳.jpg'
-# for char in ['/','\\','?','*',':','<','>','|']:
-#     if char in name:
-#         newName = name.replace(char,'')
-#         name = newName
-#         print(name)
-# dict = {"name1": "痛苦之拥-K/DA 伊芙琳28006.jpg";"name3":"提莫"约德尔人的一大步""}
-# name2 = dict["name"]
-# print(name2)
-# for char in ['/','\\','?','*',':','<','>','|','"']:
-#     if char in name2:
-#         newName = name2.replace(char,'')
-#         name2 = newName
-#         print(name2)
+from bs4 import BeautifulSoup
+import re
+'''练习抓取百度新闻首页'''
 
-# name2dic={"id":"17003"}
-# print(dic["id"])
-# if cmp(dic["id"],str(17003)):
-#     print('22')
-pf = {"skinId": "32004","name": "殇之木乃伊-阿木木“主人不要我了”32004.jpg"}
-if pf['skinId'] == "32004":
+def get_first_page(url,headers):
+    response = requests.get(url,headers=headers)
+    if response.status_code == 200:
+        return response.text
 
-    print('11')
-    print('32004原来：', pf['name'])
-    pf['name'] = pf['name'].replace('“', '')
-    pf['name'] = pf['name'].replace('”', '')
-    print('32004处理：', pf['name'])
-# pf_full_name = "提莫:\"约德尔人的一大步\""
-# for char in ['/', '\\', '?', '*', ':', '<', '>', '|', '"']:
-#     # 有的名称有非法字符,没法保存，需要处理一下
-#     if char in pf_full_name:
-#         # tep_name = pf['name'].replace(char,'')
-#         # pf['name'] = tep_name
-#         temp = pf_full_name.replace(char, '')
-#         pf_full_name = temp
-#         print('去掉非法字符后的路径 + 图片名称：', pf_full_name)
+def parse_one_page(html):
+    soup = BeautifulSoup(html,'lxml')
+    raw_lst = soup.select('li a[target="_blank"]')
+    for lst in raw_lst:
+        # print(lst)
+        href = lst.attrs['href']
+        title = lst.text
+        # print(href,title)
+        yield {
+            "href":href,
+            'title':title
+        }
+def write_to_file(content):
+    with open('baidu_news.txt','a',encoding='utf8') as f:
+        f.write(content)
+        f.close()
+def get_moduleName(url,headers):
+    '''获取'''
+    # url = 'http://news.baidu.com/'
+    # headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'}
+    response = requests.get(url,headers=headers)
+    try:
+        response.status_code == 200
+        html = response.text
+        print('响应成功')
+    except Exception as e:
+        print(e)
 
+    soup = BeautifulSoup(html,'lxml')
+    total = len(soup.select('script'))
+    print('Total: %d'% total)
+    piece_html = soup.select('script')[-1].text
+    patern = 'widgetList = \[(.*?)\];'
+    result = re.findall(patern,piece_html)[0]
+    # print(result)
+
+    raw_widgetList = result.split(',')
+    my_widgetList = []
+
+    for li in raw_widgetList:
+        li = li.strip()
+        my_widgetList.append(li.replace("'",''))
+    print(my_widgetList)
+    return my_widgetList
+
+def get_module_html(modulName):
+    moduleUrl = 'http://news.baidu.com/widget?id=' + modulName
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'}
+    response = requests.get(moduleUrl, headers=headers)
+    print("moduleUrl :%s"% response.url)
+    if response.status_code == 200:
+        # print(response.text)
+        return response.text
+
+def run():
+    url = 'http://news.baidu.com/'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'}
+
+    html = get_first_page(url,headers)
+    for each in parse_one_page(html):
+        # print(each)
+        write_to_file(str(each)+'\n')
+    for module in get_moduleName(url,headers):
+        module_html = get_module_html(module)
+        for each in parse_one_page(module_html):
+            write_to_file(str(each) + '\n')
+
+if __name__ == '__main__':
+    run()
